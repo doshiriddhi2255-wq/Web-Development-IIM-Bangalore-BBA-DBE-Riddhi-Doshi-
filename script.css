@@ -1,0 +1,73 @@
+// Show current date/time
+function updateCurrentTime() {
+  const currentTimeElem = document.getElementById('currentTime');
+  const now = new Date();
+  const options = {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    hour12: false,
+  };
+  currentTimeElem.textContent = now.toLocaleDateString('en-US', options);
+}
+
+// Badge click handling
+function setupBadges() {
+  const badges = document.querySelectorAll('.badge');
+  const popup = document.getElementById('popup');
+
+  badges.forEach((badge) => {
+    badge.addEventListener('click', () => {
+      const isActive = badge.classList.toggle('active');
+      badge.setAttribute('aria-pressed', isActive);
+
+      if (isActive) {
+        showPopup(`Achievement unlocked: ${badge.textContent}`);
+      }
+    });
+
+    // Enable keyboard toggle (space/enter)
+    badge.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        badge.click();
+      }
+    });
+  });
+}
+
+// Show popup message briefly
+function showPopup(message) {
+  const popup = document.getElementById('popup');
+  if (!popup) return;
+
+  popup.textContent = message;
+  popup.style.opacity = '1';
+  popup.style.pointerEvents = 'auto';
+
+  clearTimeout(popup._timeout);
+  popup._timeout = setTimeout(() => {
+    popup.style.opacity = '0';
+    popup.style.pointerEvents = 'none';
+  }, 3000);
+}
+
+// Scroll progress bar
+function setupProgressBar() {
+  const progressBar = document.getElementById('progress-bar');
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const scrolledPercent = (scrollTop / docHeight) * 100;
+    progressBar.style.width = `${scrolledPercent}%`;
+  });
+}
+
+// Initialize all interactions
+function init() {
+  updateCurrentTime();
+  setInterval(updateCurrentTime, 1000);
+  setupBadges();
+  setupProgressBar();
+}
+
+document.addEventListener('DOMContentLoaded', init);
